@@ -1,13 +1,13 @@
 # **Ungrouped Data Statistics Program Documentation**
 ![6](https://github.com/user-attachments/assets/be233a50-02bd-4bc4-a44e-e61337141cfa)
+![1](https://github.com/user-attachments/assets/b9c133ea-1157-4323-9302-6ff9cba088a4)
+![4](https://github.com/user-attachments/assets/6affa8d9-7ee1-446e-a356-a275872d9dfc)
+![3](https://github.com/user-attachments/assets/609f490e-1dcd-4ec2-830c-261eea39bf17)
 
 # **PAGE NAME: UNGROUPED.PY**
 ---
 ## **Program Overview**
 > This program is a Streamlit application designed to analyze ungrouped data, particularly focusing on age data from a dataset. The application calculates various statistical measures and provides visualizations to help understand the distribution and characteristics of the data. Below is an overview of what the program does and the key functionalities it provides.
-
-![4](https://github.com/user-attachments/assets/6affa8d9-7ee1-446e-a356-a275872d9dfc)
-
 
 > The program begins by importing necessary libraries, including:
 
@@ -17,8 +17,6 @@
 - **SciPy.stats**: For statistical calculations like skewness and kurtosis.
 - **Plotly**: For creating interactive visualizations.
 - **Streamlit Extras**: For additional UI enhancements.
-
-![3](https://github.com/user-attachments/assets/609f490e-1dcd-4ec2-830c-261eea39bf17)
 
 ```python
 import streamlit as st
@@ -37,7 +35,7 @@ from streamlit_extras.metric_cards import style_metric_cards
 def load_data():
     return pd.read_csv('dataset.csv')
 ```
-![1](https://github.com/user-attachments/assets/b9c133ea-1157-4323-9302-6ff9cba088a4)
+
 
 ### **2 Statistical Calculations**
 > The core functionality of the program revolves around calculating key statistical measures for ungrouped data. These include:
@@ -53,6 +51,7 @@ def load_data():
 - These calculations are performed using the calculate_ungrouped_statistics(data) function.
 
 ```python
+
 
 def calculate_ungrouped_statistics(data):
     mean = data.mean()
