@@ -1,9 +1,13 @@
 # **Ungrouped Data Statistics Program Documentation**
+![6](https://github.com/user-attachments/assets/be233a50-02bd-4bc4-a44e-e61337141cfa)
 
 # **PAGE NAME: UNGROUPED.PY**
 ---
 ## **Program Overview**
 > This program is a Streamlit application designed to analyze ungrouped data, particularly focusing on age data from a dataset. The application calculates various statistical measures and provides visualizations to help understand the distribution and characteristics of the data. Below is an overview of what the program does and the key functionalities it provides.
+
+![4](https://github.com/user-attachments/assets/6affa8d9-7ee1-446e-a356-a275872d9dfc)
+
 
 > The program begins by importing necessary libraries, including:
 
@@ -13,6 +17,8 @@
 - **SciPy.stats**: For statistical calculations like skewness and kurtosis.
 - **Plotly**: For creating interactive visualizations.
 - **Streamlit Extras**: For additional UI enhancements.
+
+![3](https://github.com/user-attachments/assets/609f490e-1dcd-4ec2-830c-261eea39bf17)
 
 ```python
 import streamlit as st
@@ -31,6 +37,7 @@ from streamlit_extras.metric_cards import style_metric_cards
 def load_data():
     return pd.read_csv('dataset.csv')
 ```
+![1](https://github.com/user-attachments/assets/b9c133ea-1157-4323-9302-6ff9cba088a4)
 
 ### **2 Statistical Calculations**
 > The core functionality of the program revolves around calculating key statistical measures for ungrouped data. These include:
@@ -117,142 +124,6 @@ if __name__ == "__main__":
     main()
 ```
 
-# **PAGE NAME: GROUPED.PY**
-
-# **Grouped Data Statistics Program Documentation**
-
-## **Program Overview**
-This Streamlit application analyzes grouped data, specifically focusing on age data from a dataset. It calculates various statistical measures for grouped data and provides visualizations to help users understand the distribution and characteristics of the data.
-
-### **1. Importing Libraries**
-
-The program begins by importing necessary libraries, including:
-
-- **Streamlit**: For creating the web application interface.
-- **Pandas**: For data manipulation and analysis.
-- **NumPy**: For numerical operations.
-- **SciPy.stats**: For statistical calculations like skewness and kurtosis.
-- **Plotly**: For creating interactive visualizations.
-- **Streamlit Extras**: For additional UI enhancements.
-
-```python
-import streamlit as st
-import pandas as pd
-import numpy as np
-from scipy.stats import skew, kurtosis, norm
-import plotly.graph_objects as go
-import plotly.express as px
-from streamlit_extras.metric_cards import style_metric_cards
-```
-
-### **2. Configuring the Streamlit Page**
-> The application sets the page layout to wide using st.set_page_config() to utilize the full screen width.
-
-```python
-st.set_page_config(layout="wide")
-```
-### **3. Loading the Dataset**
-> The load_data() function is responsible for loading the dataset from a CSV file named dataset.csv.
-
-```python
-def load_data():
-    return pd.read_csv('dataset.csv')
-```
-### **4. Sidebar Image**
-> An image is added to the sidebar for branding purposes, with the caption "EmployeeEcho Insights".
-
-```python
-st.sidebar.image("logo2.png", caption="EmployeeEcho Insights")
-```
-### **5. Loading Custom CSS**
-> The application loads a custom CSS file to style the page. This CSS can include various customizations like colors, fonts, and layout adjustments.
-
-```python
-with open('style.css') as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-```
-### **6. Calculating Age Intervals**
-> The calculate_age_intervals(max_age) function generates age intervals and corresponding labels for binning the age data. This function creates intervals of 10 years.
-
-```python
-def calculate_age_intervals(max_age):
-    intervals = np.arange(0, max_age + 11, 10)  # Adjusted to include maximum age
-    labels = [f'{i}-{i+10}' for i in range(0, max_age + 1, 10)]  # Adjusted to include maximum age
-    return intervals, labels
-```
-
-### **7. Calculating Grouped Data Statistics**
-> The calculate_grouped_statistics(freq_table) function calculates key statistical measures for the grouped data:
-
-- Mean: The average value.
-- Mode: The most frequent interval.
-- Median: The middle interval.
-- Variance: A measure of dispersion.
-- Standard Deviation: The square root of variance.
-- Skewness: The asymmetry of the distribution.
-- Kurtosis: The "tailedness" of the distribution.
-- Interquartile Range (IQR): The range between the first and third quartiles.
-- Standard Error: An estimate of the standard deviation of the sample mean.
-- The function calculates these statistics by first converting age intervals to numerical midpoints, then applying statistical formulas.
-
-```python
-def calculate_grouped_statistics(freq_table):
-    # Convert 'Age Interval' to numerical midpoints
-    def get_midpoint(interval):
-        start, end = map(int, interval.split('-'))
-        return (start + end) / 2
-    
-    # Apply midpoint function and ensure numerical type
-    freq_table['Midpoint'] = freq_table['Age Interval'].apply(get_midpoint).astype(float)
-
-    # Calculate cumulative frequency
-    freq_table['Cumulative Frequency'] = freq_table['Frequency'].cumsum()
-
-    # Calculate mean
-    mean_grouped = (freq_table['Midpoint'] * freq_table['Frequency']).sum() / freq_table['Frequency'].sum()
-
-    # Calculate mode class
-    mode_class = freq_table.loc[freq_table['Frequency'].idxmax()]['Age Interval']
-    mode_class_start, mode_class_end = map(int, mode_class.split('-'))
-    mode_freq = freq_table.loc[freq_table['Age Interval'] == mode_class, 'Frequency'].values[0]
-    cumulative_freq_before = freq_table['Frequency'].cumsum().loc[freq_table['Age Interval'] == mode_class].values[0] - mode_freq
-    mode = mode_class_start + ((mode_freq - cumulative_freq_before) / (2 * mode_freq)) * (mode_class_end - mode_class_start)
-
-    # Calculate median
-    total_freq = freq_table['Frequency'].sum()
-    cumulative_freq = freq_table['Cumulative Frequency']
-    median_class = freq_table.loc[cumulative_freq >= (total_freq / 2)].iloc[0]['Age Interval']
-    median_class_start, median_class_end = map(int, median_class.split('-'))
-    median_freq = freq_table.loc[freq_table['Age Interval'] == median_class, 'Frequency'].values[0]
-    cumulative_freq_before = cumulative_freq[freq_table['Age Interval'] == median_class].values[0] - median_freq
-    median = median_class_start + ((total_freq / 2 - cumulative_freq_before) / median_freq) * (median_class_end - median_class_start)
-
-    # Calculate variance
-    variance = ((freq_table['Midpoint'] - mean_grouped)**2 * freq_table['Frequency']).sum() / freq_table['Frequency'].sum()
-    std_dev = np.sqrt(variance)
-
-    # Calculate skewness
-    skewness_grouped = skew(freq_table['Midpoint'].repeat(freq_table['Frequency']))
-
-    # Calculate kurtosis
-    kurtosis_value = kurtosis(freq_table['Midpoint'].repeat(freq_table['Frequency']))
-
-    # Calculate IQR
-    Q1 = freq_table.loc[freq_table['Frequency'].cumsum() >= (total_freq * 0.25)].iloc[0]['Midpoint']
-    Q3 = freq_table.loc[freq_table['Frequency'].cumsum() >= (total_freq * 0.75)].iloc[0]['Midpoint']
-    IQR = Q3 - Q1
-
-    # Calculate standard error
-    standard_error = std_dev / np.sqrt(freq_table['Frequency'].sum())
-
-    return mean_grouped, mode, mode_class, median, skewness_grouped, kurtosis_value, IQR, std_dev, 
-```
-
-
-Here's a detailed explanation of the provided code in Markdown format, including the source code blocks and explanations for each code segment:
-
-markdown
-Copy code
 # **Grouped Data Statistics Program Documentation**
 
 This Streamlit application analyzes grouped data, specifically focusing on age data from a dataset. It calculates various statistical measures for grouped data and provides visualizations to help users understand the distribution and characteristics of the data.
